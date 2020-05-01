@@ -44,6 +44,8 @@ function setThemeSwitcherProps(target, toTheme) {
 	primaryColor = (toTheme === LIGHT) ? DARK_BACKGROUND : LIGHT_BACKGROUND;
 	theme = (toTheme === LIGHT) ? LIGHT : DARK;
 
+	document.cookie = JSON.stringify({"theme": theme});
+
 	logoLight.style.zIndex = (toTheme === LIGHT) ? 2 : 3;
 	logoDark.style.zIndex = (toTheme === LIGHT) ? 3 : 2;
 }
@@ -76,7 +78,7 @@ function setup() {
 	themeSwitcher = document.getElementsByClassName("themeSwitcher")[0];
 	logoDark = document.getElementsByClassName("logoDark")[0];
 	logoLight = document.getElementsByClassName("logoLight")[0];
-	setThemeSwitcherProps(themeSwitcher, LIGHT);
+	setThemeSwitcherProps(themeSwitcher, (document.cookie ? JSON.parse(document.cookie).theme : false) === LIGHT ? LIGHT : DARK);
 
 	themeSwitcher.addEventListener("click", (e) => {
 		setThemeSwitcherProps(e.target, theme === LIGHT ? DARK : LIGHT);
