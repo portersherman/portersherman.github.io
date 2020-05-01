@@ -20,6 +20,8 @@ const CUTOUT_Y_HEIGHT = 3;
 const LIGHT = "light";
 const DARK = "dark";
 
+const GLOBAL_RAMP_TIME = 25;
+
 let dests = [];
 let links = [];
 let globalColor;
@@ -28,11 +30,11 @@ let height;
 let width;
 let xStep;
 let yStep;
-let primaryColor = DARK_BACKGROUND;
-let backgroundColor = LIGHT_BACKGROUND;
+let backgroundColor;
 let themeSwitcher;
 let canvas;
 let logoLight, logoDark;
+let globalRamp = 0;
 
 let theme = LIGHT;
 
@@ -40,8 +42,7 @@ function setThemeSwitcherProps(target, toTheme) {
 	target.style.borderColor = (toTheme === LIGHT) ? DARK_BACKGROUND : LIGHT_BACKGROUND;
 	target.firstElementChild.style.backgroundColor = (toTheme === LIGHT) ? DARK_BACKGROUND : LIGHT_BACKGROUND;
 
-	backgroundColor = (toTheme === LIGHT) ? LIGHT_BACKGROUND : DARK_BACKGROUND;
-	primaryColor = (toTheme === LIGHT) ? DARK_BACKGROUND : LIGHT_BACKGROUND;
+	backgroundColor = (toTheme === LIGHT) ? color(LIGHT_BACKGROUND) : color(DARK_BACKGROUND);
 	theme = (toTheme === LIGHT) ? LIGHT : DARK;
 
 	document.cookie = JSON.stringify({"theme": theme});
@@ -115,7 +116,7 @@ class Dest {
 
 	draw() {
 		let fillColor = this.color;
-		fillColor.setAlpha(this.opacity);
+		fillColor.setAlpha(this.opacity * (globalRamp / GLOBAL_RAMP_TIME));
 		fill(fillColor);
 		noStroke();
 		ellipseMode(CENTER);
@@ -138,7 +139,7 @@ class Link {
 	}
 
 	draw() {
-		this.color.setAlpha(this.opacity * (this.ramp / RAMP_TIME) * (this.ttl / MAX_TTL));
+		this.color.setAlpha(this.opacity * (this.ramp / RAMP_TIME) * (this.ttl / MAX_TTL) * (globalRamp / GLOBAL_RAMP_TIME));
 		stroke(this.color);
 		strokeWeight(1);
 		line(
@@ -201,6 +202,10 @@ function renderClock() {
 	let minuteColor = lerpColor(globalColorSecondary, globalColorTertiary, 0.5);
 	let secondColor = globalColorTertiary;
 
+	hourColor.setAlpha(255 * (globalRamp / GLOBAL_RAMP_TIME));
+	minuteColor.setAlpha(255 * (globalRamp / GLOBAL_RAMP_TIME));
+	secondColor.setAlpha(255 * (globalRamp / GLOBAL_RAMP_TIME));
+
 	strokeCap(SQUARE);
 
 	stroke(hourColor);
@@ -227,8 +232,13 @@ function renderClock() {
 }
 
 function draw() {
+	if (globalRamp < GLOBAL_RAMP_TIME) {
+		globalRamp += 1;
+	}
+
 	clear();
 
+	backgroundColor.setAlpha(255 * globalRamp / GLOBAL_RAMP_TIME);
 	background(backgroundColor);
 
 	createLink();
