@@ -1,0 +1,42 @@
+body {
+    padding: 0;
+    margin: 0;
+}
+
+img {
+    position: absolute;
+    height: 32px;
+    width: 32px;
+    right: 34px;
+    bottom: 34px;
+}
+
+.themeSwitcher {
+    box-sizing: border-box;
+    position: absolute;
+    right: 42px;
+    top: 42px;
+    width: 16px;
+    height: 16px;
+    border: 1px solid transparent;
+    border-radius: 50%;
+}
+
+.themeSwitcher:hover { 
+    cursor: pointer;
+
+}
+
+.themeSwitcherIcon {
+    pointer-events: none;
+    box-sizing: border-box;
+    width: 14px;
+    height: 14px;
+    opacity: 0;
+    border-radius: 50%;
+    transition: opacity 300ms ease-in-out;
+}
+
+.themeSwitcher:hover>.themeSwitcherIcon {
+    opacity: 1;
+}
